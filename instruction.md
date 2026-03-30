@@ -1,62 +1,77 @@
-# CSV Cleaner CLI Task
+# CSV Cleaner CLI (Invisible Errors + Business Logic)
 
-Build a Python command-line tool named `cleaner.py` that cleans a messy CSV file.
+Implement a Python CLI tool `cleaner.py` to clean one CSV table.
 
-## Input and Output
-- Input file: `environment/dirty_data.csv`
-- Output file: any path provided by CLI argument (for example `cleaned_data.csv`)
+## CLI Contract
+Your program must accept only one invocation mode:
 
-Your program must support:
-
+1. Positional mode only:
 ```bash
-python cleaner.py --input <input_csv_path> --output <output_csv_path>
+python cleaner.py <input_csv> <output_csv>
 ```
 
-## Required Cleaning Rules
-1. Skip blank rows.
-2. Trim leading/trailing spaces for every field.
-3. Keep and normalize this exact header order:
-   - `user_id,name,email,age,signup_date,status,score,notes`
-4. `user_id` must be a positive integer. Drop row if invalid.
-5. `name`:
-   - Collapse repeated internal spaces into one.
-   - Convert to title case.
-   - If empty, use `Unknown`.
-6. `email`:
-   - Convert to lowercase.
-   - Must be in a valid basic email format (contains one `@`, valid domain with dot).
-   - Drop row if invalid.
-7. `age`:
-   - Keep integer if it is in `[0, 120]`.
-   - Otherwise write empty string.
-8. `signup_date`:
-   - Accept these input formats: `YYYY-MM-DD`, `DD/MM/YYYY`, `MM-DD-YYYY`, `YYYY/MM/DD`, `YYYY.MM.DD`.
-   - If the value includes time part (for example `YYYY-MM-DDTHH:MM:SSZ`), use only the date part.
-   - Convert valid dates to `YYYY-MM-DD`.
-   - Invalid date becomes empty string.
-9. `status`:
-   - Case-insensitive allowed values: `active`, `inactive`, `pending`.
-   - Also normalize aliases: `enabled -> active`, `disabled -> inactive`, `closed -> inactive`, `processing -> pending`, `review -> pending`.
-   - Any other value becomes `inactive`.
-10. `score`:
-    - Keep numeric values in `[0, 100]`.
-    - Accept optional `%` suffix (for example `88%`) and treat it as numeric value `88`.
-    - Accept thousands separators (for example `1,234.56`) before numeric validation.
-    - Round to 2 decimal places.
-    - Invalid value becomes empty string.
-11. Deduplicate by `user_id`:
-    - Keep the row with the latest valid `signup_date`.
-    - If dates tie, keep the one with higher numeric `score`.
-    - If still tied, keep the first encountered row.
-12. Final output must be sorted by `user_id` ascending.
-13. Robustness rules for messy files:
-    - Rows with fewer columns should be treated as missing trailing fields.
-    - Rows with extra columns should append extras into `notes` (joined with ` | `).
-    - Repeated header rows inside data must be ignored.
-    - Unexpected null bytes (`\x00`) should not crash the parser.
-    - `email` may contain wrappers such as `mailto:` prefix or angle brackets (`<user@example.com>`), and should still be normalized if valid.
-    - `age` can be an integer-like decimal string (for example `30.0`) and should be normalized to integer if valid.
+## Input Schema
+Use this exact header:
 
-## Notes
-- Use Python standard library only.
-- The program must work in Linux.
+`user_id,name,email,age,signup_date,status,score,notes`
+
+## Hard Rules
+1. **Primary Key Validation**
+   - `user_id` must be a non-empty positive integer.
+   - Drop rows with empty `user_id` or non-numeric `user_id` (for example `abc`).
+
+2. **Row Structure Validation**
+   - Each data row must have exactly 8 columns.
+   - Drop rows with fewer or extra columns.
+
+3. **Type & Range**
+   - `age` must be an integer in `[0, 120]`.
+   - If `age` is out of range or cannot be converted (for example `notanumber`, `N/A`, empty), drop the entire row.
+
+4. **String Normalization**
+   - `email` must be trimmed and lowercased.
+   - If `email` is not a basic valid format (must contain `@` and at least one `.` after `@`), drop the entire row.
+
+5. **Invisible Errors**
+   - For text fields `name` and `status`, remove leading/trailing invisible characters:
+     - spaces
+     - tabs (`\t`)
+     - zero-width spaces
+     - zero-width joiners (`\u200d`)
+     - BOM (`\ufeff`)
+
+6. **Complex Deduplication (Business Logic)**
+   - Deduplicate by `user_id`.
+   - For duplicate `user_id`, keep the record with the latest **valid** `signup_date`.
+   - If `signup_date` ties, keep the one with higher numeric `score`. Treat invalid or empty scores as `0` during this comparison.
+   - If still tied, keep the first one in input order.
+   - Date parsing must support:
+     - `YYYY-MM-DD`
+     - `YYYY/MM/DD`
+     - `MM/DD/YYYY`
+     - `DD/MM/YYYY`
+     - `MM-DD-YYYY`
+     - `YYYY.MM.DD`
+     - ISO datetime (truncate to date before parsing)
+   - Ambiguous slash dates (for example `03/04/2024`) must be parsed with this priority:
+     - `MM/DD/YYYY` first, then `DD/MM/YYYY`.
+   - Invalid dates are allowed to exist but must lose against valid dates in dedup comparison.
+
+7. **Output Format**
+   - The output CSV must keep the exact same header:
+     - `user_id,name,email,age,signup_date,status,score,notes`
+   - `signup_date` must be output in strict `YYYY-MM-DD` format when valid, otherwise output an empty string.
+   - `email`, `name`, and `status` must be output in their cleaned forms.
+     - `email`: trimmed + lowercased
+     - `name`: trimmed (including zero-width/tab/space edges removed)
+     - `status`: trimmed + lowercased
+   - `score` output rule:
+     - keep a trimmed numeric string when score is numeric
+     - output `0` when score is invalid or empty
+   - Final output rows must be sorted by numeric `user_id` ascending.
+
+## Additional Notes
+- Use Python standard library (`csv`) to parse/write files.
+- The dirty dataset contains quoted fields with commas and line breaks.
+- Do not parse CSV using `split(',')`.
+- All file read/write operations MUST use `utf-8` encoding.

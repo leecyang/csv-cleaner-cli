@@ -1,0 +1,19 @@
+user_id,name,email,age,signup_date,status,score,notes
+1,Alice,alice@example.com,30,2024-01-10,active,88,normal row with hidden spaces
+7,Final Seven,seven.new@example.com,25,2024-02-28,active,20,should win by latest valid date
+8,Bob,bob@example.com,40,2024-03-03,pending,50,trim tabs in name and status
+9,High Score,nine.high@example.com,20,2024-03-01,inactive,2,tie date high score should win
+10,Multi Line,ml@example.com,33,2024-03-05,active,71,"line1,
+line2,with comma"
+14,Carol,carol@example.com,120,2024-03-07,inactive,85,edge age at upper bound
+15,Dave,dave@example.com,30,2024-03-10,active,80,Name contains zero-width spaces (\u200b)
+16,ISO Time,iso@example.com,25,2024-03-11,active,90,ISO datetime should be parsed as 2024-03-11
+18,Order First,order1@example.com,30,2024-03-15,active,100,"Identical date and score, this is first"
+20,Empty Row Test,empty@example.com,30,2024-03-17,active,50,above is a pure comma line
+21,Bad Score Two,score2@example.com,25,2024-03-18,active,10,"tie date, valid score wins"
+22,Ambiguous Slash Second,ambig.second@example.com,30,2024-04-03,active,10,should win if MM/DD priority is used
+23,Cross Format First,cross.first@example.com,30,2024-03-01,active,50,canonical date
+26,Joiner,zwj@example.com,30,2024-03-21,active,33,BOM and ZWJ edge trim test
+27,Invalid Score Keep,invscore@example.com,25,2024-03-22,active,0,invalid score should output 0
+28,Empty Score,emptyscore@example.com,25,2024-03-23,active,0,empty score should output 0
+29,Valid Score Tie,score.valid.tie@example.com,25,2024-03-24,active,5,tie date valid score should win

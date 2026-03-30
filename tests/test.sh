@@ -1,20 +1,11 @@
-#!/usr/bin/env sh
-set +e
+#!/bin/bash
 
-PYTHON_BIN="python3"
-if ! command -v "$PYTHON_BIN" >/dev/null 2>&1; then
-  PYTHON_BIN="python"
+python3 tests/test_logic.py
+
+if [ $? -eq 0 ]; then
+    echo "Benchmark Passed: AI successfully cleaned the data."
+    exit 0
+else
+    echo "Benchmark Failed: AI logic is incorrect."
+    exit 1
 fi
-
-if ! command -v "$PYTHON_BIN" >/dev/null 2>&1; then
-  exit 1
-fi
-
-"$PYTHON_BIN" tests/test_logic.py --cleaner solution/cleaner.py
-status=$?
-
-if [ "$status" -eq 0 ]; then
-  exit 0
-fi
-
-exit 1
