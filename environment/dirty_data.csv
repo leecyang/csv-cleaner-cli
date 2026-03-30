@@ -1,0 +1,60 @@
+ user_id , name , email , age , signup_date , status , score , notes
+1, alice  , ALICE@example.COM , 29 , 2024-01-15 , Active , 88.126 , first entry
+2,Bob,,35,15/02/2024,pending,91,missing email
+3,  ,charlie@example.com,200,03-20-2024,UNKNOWN,77.777,bad age and status
+4,David,david@example,40,2024/04/01,active,101,invalid email and score
+5,Eve,eve@example.com,notanumber,2024-05-02,inactive,85.5,age invalid
+,,,,,,,
+1, Alice B , alice.b@example.com ,30,2024-02-01,active,95.2,duplicate newer
+6,Frank,frank@example.com,28,31/02/2024,active,82,invalid date
+-7,Gina,gina@example.com,26,2024-03-01,active,66,negative id
+7,Henry,henry@example.com, 27 ,2024-03-01,PENDING, 70.555 ,ok
+7,Henry X,henryx@example.com,27,2024-03-01,pending,72,tie date higher score keep this
+8,   isaac   newton   , isaac@example.com , 45 , 2024-01-01 , inactive , , extra spaces
+9,Jane,jane@example.com,33,13/13/2024,active,90,bad date
+10,Kate,kate@example.com,25,2024-06-01,unknown,abc,bad score
+user_id,name,email,age,signup_date,status,score,notes
+11,Mary,mary@example.com,20,2024-07-01,active,99,older duplicate
+11,  mary   jane  , MARY.JANE+vip@Example.COM ,  0 , 2024-07-15 , ACTIVE , 100 , plus alias email
+12,	noah	,noah@example.com,-1,16/07/2024,  Pending ,1e2,tab name and sci score
+13,Liam,liam@example.com,31,2024-07-01
+14,Mia,mia@example.com,22,2024-07-02,active,88,has extra,EXTRA1,EXTRA2
+15,"  olivia, smith  ",olivia@example.com,30,07-20-2024,active,87.456,"quoted, note"
+16,Emma, EMMA@Example.com ,29,2024-08-01,UNKNOWN,NaN,nan score
++17,Jack,jack@example.com,40,2024-02-30,active,75,bad date
+this,is,not,a,valid,row,for,csv
+18,  sam  ,<SAM@example.com>,30.0,2024-07-21T10:20:30Z,enabled,88%,email brackets and iso datetime
+19,Ava,mailto:ava@example.com,0032,2024/07/22,processing,1,mailer style email
+20,Ruby,ruby@example.com,26,2024.07.23,closed,66.60,alias status with dot date
+20,Ruby  V2,ruby.v2@example.com,26,2024-07-23,inactive,66.667,duplicate same date higher rounded score
+21,Leo,leo@example.com,35.5,2024-07-24,active,72,non integer age
+22,Ella,ella@example.com,20,2024-07-25,active,"1,234.56",comma score invalid by range
+23,Nora,nora@example.com,22,2024-07-26,review,98,review status alias
+24,Tom,tom@example.com,40,not-a-date,active,99,bad first duplicate invalid date
+24,Tom New,tom.new@example.com,40,2024-07-27,active,10,newer valid date should win
+25,Ann,ann@example.com,30,2024-07-20,active,50,latest date should win
+25,Ann Prime,ann.prime@example.com,30,2024-07-19,active,100,older higher score should lose
+26,Ben,ben@example.com,29,2024-07-28,active,,empty score
+26,Ben B,benb@example.com,29,2024-07-28,active,0,same date numeric score should win
+27,"  jean-luc   picard  ",JEAN@example.com,59,2024-07-29,open,88.8,name hyphen and open status
+28,Luna,luna@example.com,120,2024-07-30,disabled,-0.01,negative score
+29,Max,max@example.com,121,2024-07-31,processing,70,age high
+30,Ivy,ivy@example.com,18,2024-07-32,closed,60,invalid day in date
+31,  ,valid31@example.com,44,2024-08-02,active,00042.10,blank name should become unknown
+32,Kelly,<kelly@example.com>,30.00,2024-08-03 11:00:00,review,100%,datetime with space
+33,Mark,mark@example.com,27,2024-08-04,active,1e-1,tiny scientific score
+34,Nick,nick@example.com,23,2024-08-05,active,88,,TAIL_A,TAIL_B
+35,Sophia,sophia@example.com,27 years,2024-08-06,active,89.5,age with unit
+36,Ethan,ethan@example.com,NULL,2024-08-07,ERROR,ERROR,placeholder tokens
+37,Olive,olive@example.com,34,2024-08-08,active,$91.2,currency score
+38,Mason,mason(at)example.com,30,2024-08-09,active,80,pattern violation email
+39,Chloe,chloe@example.com,29,08/09/2024,pending,88,eu date format
+40,Lucas,lucas@example.com,28,2024-08-10,pending,0%,percent zero
+41,Amelia,amelia@example.com,N/A,2024-08-11,enabled,100.000,age missing token
+42,Harper,harper@example.com,45,2024-08-12,closed,1 0 0,spaced score digits
+43,NoEmail,UNKNOWN,33,2024-08-13,active,77,email placeholder token
+44,BadDate,baddate@example.com,30,2024-13-01,active,77,invalid month
+45,DupTest,dup@example.com,30,2024-08-01,active,60,older record
+45,DupTest New,dup.new@example.com,30,2024-08-15,active,55,newer record should win
+46,TieDate,tie@example.com,30,2024-08-16,active,50,tie date low score
+46,TieDate High,tie.high@example.com,30,2024-08-16,active,50.1,tie date high score

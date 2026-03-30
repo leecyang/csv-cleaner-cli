@@ -1,0 +1,9 @@
+FROM python:3.11.9-slim
+
+WORKDIR /workspace
+
+# 按要求复制整个项目
+COPY . /workspace
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
